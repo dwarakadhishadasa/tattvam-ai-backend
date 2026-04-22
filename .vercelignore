@@ -1,0 +1,12 @@
+.agents
+.codex
+_bmad
+_bmad-output
+design-artifacts
+postman
+scripts
+specs
+tests
+__pycache__
+content.txt
+package-lock.json
