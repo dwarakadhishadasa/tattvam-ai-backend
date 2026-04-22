@@ -52,7 +52,7 @@ It allows you to manage Notebooks, add sources, perform Q&A, generate artifacts,
 * Task polling support
 * File download support
 
-### 🔐 Optional API Key Protection
+### 🔐 API Key Protection
 
 ---
 
@@ -111,6 +111,8 @@ You can override it with:
 export NOTEBOOKLM_STORAGE_PATH=/path/to/storage_state.json
 ```
 
+For deployed environments such as Vercel, prefer `NOTEBOOKLM_AUTH_JSON` instead of a filesystem path. The runtime only needs the saved auth JSON; browser automation is only needed on the operator machine when refreshing the session.
+
 ---
 
 ## ▶️ Run Server
@@ -127,7 +129,7 @@ http://localhost:8000/docs
 
 ---
 
-## 🔐 Optional API Key Protection
+## 🔐 API Key Protection
 
 Set API key:
 
@@ -140,6 +142,8 @@ Send header:
 ```
 X-API-Key: your-secret-key
 ```
+
+When `NOTEBOOKLM_REST_API_KEY` is set, all application routes require this header.
 
 ---
 
@@ -227,6 +231,42 @@ GET /v1/notebooks/{notebook_id}/artifacts/download?type=slide_deck&output_format
 | NOTEBOOKLM_AUTH_JSON    | Inject auth JSON directly  |
 | NOTEBOOKLM_HOME         | Base notebooklm directory  |
 | NOTEBOOKLM_REST_API_KEY | REST API protection key    |
+
+---
+
+## ▲ Deploy On Vercel
+
+This repository now includes [vercel.json](/home/dwarakadas/projects/tattvam-ai/tattvam-ai-backend/vercel.json) with the baseline deployment choices:
+
+* single FastAPI function from `app.py`
+* region pinned to `iad1`
+* `maxDuration` set to `300`
+* non-runtime files excluded from the function bundle
+
+### Recommended deployment flow
+
+1. Authenticate locally with `notebooklm login`.
+2. Copy the contents of your local `storage_state.json`.
+3. In Vercel, set `NOTEBOOKLM_AUTH_JSON` to that JSON payload.
+4. In Vercel, set `NOTEBOOKLM_REST_API_KEY` to a strong secret.
+5. Deploy with Git integration or `vc deploy`.
+
+### Session refresh runbook
+
+NotebookLM authentication is session-based, so the deployed app may eventually need a refresh.
+
+1. Run `notebooklm login` again on a local machine.
+2. Copy the refreshed `storage_state.json`.
+3. Update `NOTEBOOKLM_AUTH_JSON` in Vercel.
+4. Redeploy if needed.
+
+Typical signs that refresh is needed are new `401` or `403` errors from NotebookLM with no application code change.
+
+### Runtime notes
+
+* Vercel provides only ephemeral `/tmp` storage, so uploads and downloads should stay temporary.
+* Long-running artifact generation should use the existing generate, poll, then download flow instead of blocking on a single request.
+* `playwright` is only needed for local login or session refresh work, not for the deployed request path.
 
 ---
 

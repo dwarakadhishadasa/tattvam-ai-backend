@@ -1,0 +1,796 @@
+{
+  "info": {
+    "name": "NotebookLM REST API (powered by notebooklm-py)",
+    "_postman_id": "b92d1f0a-b90d-4453-bd6a-0f218739e1fd",
+    "description": "Generated from FastAPI OpenAPI schema in app.py",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ],
+              "query": []
+            },
+            "description": "Health"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notebooks",
+      "item": [
+        {
+          "name": "List Notebooks",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks"
+              ],
+              "query": []
+            },
+            "description": "List Notebooks"
+          },
+          "response": []
+        },
+        {
+          "name": "Create Notebook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks"
+              ],
+              "query": []
+            },
+            "description": "Create Notebook",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Notebook",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId"
+              ],
+              "query": []
+            },
+            "description": "Get Notebook"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Notebook",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId"
+              ],
+              "query": []
+            },
+            "description": "Delete Notebook"
+          },
+          "response": []
+        },
+        {
+          "name": "Rename Notebook",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/rename",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "rename"
+              ],
+              "query": []
+            },
+            "description": "Rename Notebook",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"new_title\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Notebook Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "summary"
+              ],
+              "query": []
+            },
+            "description": "Get Notebook Summary"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Notebook Description",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/description",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "description"
+              ],
+              "query": []
+            },
+            "description": "Get Notebook Description"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Sources",
+      "item": [
+        {
+          "name": "List Sources",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/sources",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "sources"
+              ],
+              "query": []
+            },
+            "description": "List Sources"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Source Url",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/sources/url",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "sources",
+                "url"
+              ],
+              "query": []
+            },
+            "description": "Add Source Url",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"\",\n  \"wait\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Source Youtube",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/sources/youtube",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "sources",
+                "youtube"
+              ],
+              "query": []
+            },
+            "description": "Add Source Youtube",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"url\": \"\",\n  \"wait\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Source Text",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/sources/text",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "sources",
+                "text"
+              ],
+              "query": []
+            },
+            "description": "Add Source Text",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"\",\n  \"content\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Source File",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/sources/file",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "sources",
+                "file"
+              ],
+              "query": []
+            },
+            "description": "Add Source File",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "upload",
+                  "type": "file",
+                  "disabled": false
+                },
+                {
+                  "key": "mime_type",
+                  "type": "text",
+                  "disabled": true,
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Source Fulltext",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/sources/{{sourceId}}/fulltext",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "sources",
+                ":sourceId",
+                "fulltext"
+              ],
+              "query": []
+            },
+            "description": "Get Source Fulltext"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Source Guide",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/sources/{{sourceId}}/guide",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "sources",
+                ":sourceId",
+                "guide"
+              ],
+              "query": []
+            },
+            "description": "Get Source Guide"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Source",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/sources/{{sourceId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "sources",
+                ":sourceId"
+              ],
+              "query": []
+            },
+            "description": "Delete Source"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Chat",
+      "item": [
+        {
+          "name": "Chat Ask",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/chat/ask",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "chat",
+                "ask"
+              ],
+              "query": []
+            },
+            "description": "Chat Ask",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"question\": \"\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Artifacts",
+      "item": [
+        {
+          "name": "List Artifacts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/artifacts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "artifacts"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "List Artifacts"
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Artifact",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/artifacts/generate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "artifacts",
+                "generate"
+              ],
+              "query": []
+            },
+            "description": "Generate Artifact",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"audio\",\n  \"options\": {}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Poll Task",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/artifacts/tasks/{{taskId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "artifacts",
+                "tasks",
+                ":taskId"
+              ],
+              "query": [
+                {
+                  "key": "wait",
+                  "value": "False",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Poll Task"
+          },
+          "response": []
+        },
+        {
+          "name": "Download Artifact",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "{{apiKey}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/v1/notebooks/{{notebookId}}/artifacts/download",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "notebooks",
+                ":notebookId",
+                "artifacts",
+                "download"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "audio",
+                  "disabled": false
+                },
+                {
+                  "key": "artifact_id",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "output_format",
+                  "value": "json",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Downloads the *first completed* artifact of the given type unless artifact_id is provided.\nnotebooklm-py provides type-specific download_* methods. :contentReference[oaicite:8]{index=8}"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "apiKey",
+      "value": ""
+    },
+    {
+      "key": "notebookId",
+      "value": "replace-me"
+    },
+    {
+      "key": "sourceId",
+      "value": "replace-me"
+    },
+    {
+      "key": "taskId",
+      "value": "replace-me"
+    },
+    {
+      "key": "artifactId",
+      "value": "replace-me"
+    }
+  ]
+}

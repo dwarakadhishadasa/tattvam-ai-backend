@@ -6,9 +6,10 @@ import uuid
 import tempfile
 from typing import Any, Optional, Literal, Dict
 
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Depends
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Depends, Header
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
+from starlette.background import BackgroundTask
 
 from notebooklm import (
     ArtifactDownloadError,
@@ -27,12 +28,9 @@ API_KEY = os.environ.get("NOTEBOOKLM_REST_API_KEY", "")  # set this in productio
 AUTH_STORAGE_PATH = os.environ.get("NOTEBOOKLM_STORAGE_PATH")  # optional override
 
 
-def require_api_key(x_api_key: Optional[str] = None):
-    # Minimal API-key gate. Put this behind a real gateway (Cloudflare, Nginx, etc.) for production.
+def require_api_key(x_api_key: Optional[str] = Header(None, alias="X-API-Key")):
+    # Minimal API-key gate for public deployments.
     if API_KEY:
-        # FastAPI header parsing without extra imports (keep simple):
-        # Prefer: from fastapi import Header; def require_api_key(x_api_key: str = Header(None)) ...
-        # but we keep it minimal and rely on query param fallback too.
         if x_api_key != API_KEY:
             raise HTTPException(status_code=401, detail="Invalid API key")
 
@@ -131,14 +129,14 @@ def normalize_artifact_generate_options(artifact_type: str, options: Optional[Di
 
 
 def validate_artifact_download_request(artifact_type: str, output_format: Optional[str]) -> None:
-    if output_format is None or artifact_type in {"quiz", "flashcards"}:
+    if output_format is None or artifact_type in {"quiz", "flashcards", "slide_deck"}:
         return
 
     fixed_format = FIXED_DOWNLOAD_FORMATS[artifact_type]
     raise HTTPException(
         status_code=400,
         detail=(
-            "output_format is only supported for quiz and flashcards. "
+            "output_format is only supported for quiz, flashcards and slide deck"
             f"{artifact_type} downloads are always returned as {fixed_format}."
         ),
     )
@@ -180,6 +178,7 @@ class SourceAddYoutubeReq(BaseModel):
 
 class ChatAskReq(BaseModel):
     question: str
+    conversation_id: str | None = None
     # optional persona fields could be added if you want
 
 
@@ -210,88 +209,10 @@ class TaskPollResp(BaseModel):
 # ----------------------------
 # App
 # ----------------------------
-app = FastAPI(title="NotebookLM REST API (powered by notebooklm-py)")
-
-import logging
-import re
-
-_logger = logging.getLogger(__name__)
-
-
-def _extract_answer_citation_numbers(answer: Any) -> set[int]:
-    if not isinstance(answer, str):
-        _logger.debug("chat/ask citation extraction skipped: answer type=%s", type(answer).__name__)
-        return set()
-
-    citation_numbers: set[int] = set()
-    for match in re.finditer(r"\[([0-9,\s;:\-–]+)\]", answer):
-        token = match.group(1).replace("–", "-").replace(";", ",").replace(":", ",")
-
-        for part in token.split(","):
-            cleaned = part.strip()
-            if not cleaned:
-                continue
-
-            if "-" in cleaned:
-                left, right = cleaned.split("-", 1)
-                if left.strip().isdigit() and right.strip().isdigit():
-                    range_start = int(left.strip())
-                    range_end = int(right.strip())
-                    if range_start <= range_end:
-                        citation_numbers.update(range(range_start, range_end + 1))
-            elif cleaned.isdigit():
-                citation_numbers.add(int(cleaned))
-
-    _logger.debug("chat/ask citations extracted: count=%d citations=%s", len(citation_numbers), sorted(citation_numbers))
-    return citation_numbers
-
-
-def _reference_citation_number(reference: Any) -> Optional[int]:
-    raw_number = reference.get("citation_number") if isinstance(reference, dict) else getattr(reference, "citation_number", None)
-
-    if isinstance(raw_number, int):
-        return raw_number
-    if isinstance(raw_number, str) and raw_number.isdigit():
-        return int(raw_number)
-    return None
-
-
-def _trim_chat_result(result: Any) -> Dict[str, Any]:
-    if isinstance(result, dict):
-        payload = dict(result)
-    else:
-        payload = (
-            result.model_dump()
-            if hasattr(result, "model_dump")
-            else getattr(result, "__dict__", {"answer": getattr(result, "answer", None)})
-        )
-    if not isinstance(payload, dict):
-        payload = {"answer": getattr(result, "answer", None)}
-
-    answer = payload.get("answer")
-
-    references = payload.get("references")
-    if isinstance(references, list):
-        cited_numbers = _extract_answer_citation_numbers(answer)
-        filtered_references = [reference for reference in references if _reference_citation_number(reference) in cited_numbers]
-        payload["references"] = filtered_references
-        available_numbers = {
-            citation_number
-            for citation_number in (_reference_citation_number(reference) for reference in references)
-            if citation_number is not None
-        }
-        missing_numbers = sorted(cited_numbers - available_numbers)
-        _logger.debug(
-            "chat/ask references filtered: original=%d filtered=%d cited=%d missing=%s",
-            len(references),
-            len(filtered_references),
-            len(cited_numbers),
-            missing_numbers,
-        )
-    else:
-        _logger.debug("chat/ask references filter skipped: references type=%s", type(references).__name__)
-
-    return payload
+app = FastAPI(
+    title="NotebookLM REST API (powered by notebooklm-py)",
+    dependencies=[Depends(require_api_key)],
+)
 
 
 @app.get("/health")
@@ -506,16 +427,11 @@ async def chat_ask(notebook_id: str, req: ChatAskReq):
     client = await get_client()
     async with client:
         try:
-            result = await client.chat.ask(notebook_id, req.question)
-            trimmed_result = _trim_chat_result(result)
-            _logger.debug(
-                "chat/ask response prepared: notebook_id=%s conversation_id=%s turn_number=%s reference_count=%d",
-                notebook_id,
-                trimmed_result.get("conversation_id"),
-                trimmed_result.get("turn_number"),
-                len(trimmed_result.get("references", [])) if isinstance(trimmed_result.get("references"), list) else 0,
-            )
-            return {"ok": True, "result": trimmed_result}
+            result = await client.chat.ask(notebook_id, req.question, req.conversation_id)
+            # result.answer is shown in docs :contentReference[oaicite:5]{index=5}
+            if hasattr(result, "model_dump"):
+                return {"ok": True, "result": result.model_dump()}
+            return {"ok": True, "result": getattr(result, "__dict__", {"answer": getattr(result, "answer", None)})}
         except RPCError as e:
             raise map_rpc_error(e)
 
@@ -706,7 +622,12 @@ async def download_artifact(
                     else ("text/markdown; charset=utf-8" if output_format == "markdown" else "text/html; charset=utf-8")
                 ),
             }
-            return FileResponse(out_path, filename=filename, media_type=media_type_map[type])
+            return FileResponse(
+                out_path,
+                filename=filename,
+                media_type=media_type_map[type],
+                background=BackgroundTask(cleanup_temp_file, out_path),
+            )
         except HTTPException:
             cleanup_temp_file(out_path)
             raise

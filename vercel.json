@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["iad1"],
+  "functions": {
+    "app.py": {
+      "maxDuration": 300,
+      "excludeFiles": "{tests/**,postman/**,_bmad/**,.agents/**,scripts/**,.codex/**,README.md,content.txt,package-lock.json}"
+    }
+  }
+}

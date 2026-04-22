@@ -23,6 +23,18 @@ class FakeNotebookLMClient:
 
 
 class DownloadArtifactTests(unittest.IsolatedAsyncioTestCase):
+    def test_require_api_key_accepts_matching_header(self):
+        with patch.object(backend_app, "API_KEY", "top-secret"):
+            backend_app.require_api_key("top-secret")
+
+    def test_require_api_key_rejects_invalid_header(self):
+        with patch.object(backend_app, "API_KEY", "top-secret"):
+            with self.assertRaises(HTTPException) as ctx:
+                backend_app.require_api_key("wrong-secret")
+
+        self.assertEqual(ctx.exception.status_code, 401)
+        self.assertEqual(ctx.exception.detail, "Invalid API key")
+
     async def test_slide_deck_download_supports_pptx_output_format(self):
         fake_client = FakeNotebookLMClient()
         expected_bytes = b"pptx-bytes"
@@ -49,6 +61,7 @@ class DownloadArtifactTests(unittest.IsolatedAsyncioTestCase):
             response.media_type,
             "application/vnd.openxmlformats-officedocument.presentationml.presentation",
         )
+        self.assertIsNotNone(response.background)
         self.assertTrue(response.path.endswith(".pptx"))
         fake_client.artifacts.download_slide_deck.assert_awaited_once_with(
             "notebook-123",
